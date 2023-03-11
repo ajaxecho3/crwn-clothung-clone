@@ -1,8 +1,9 @@
-import React, { ChangeEvent, FormEvent, useState } from 'react'
+import React, { ChangeEvent, FormEvent, useContext, useState } from 'react'
 import Button from '../common/Button'
 import Input from '../common/Input'
 import {  createUserDocumentFromAuth, signAuthUserWithEmailAndPassword, signInWithGooglePopup } from '../../utils/firebase'
 import './index.scss'
+import { UserContext } from '../../context/user.context'
 type Props = {}
 
 const defaultFormFields = {
@@ -24,6 +25,8 @@ const SignIn = (props: Props) => {
    
   } = formFields
 
+  const { setCurrentUser} =  useContext(UserContext)
+
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
     setFormFields({ ...formFields, [name]: value })
@@ -36,8 +39,8 @@ const SignIn = (props: Props) => {
     try {
       const response = await signAuthUserWithEmailAndPassword(email, password)
 
-      console.log(response)
-     
+      setCurrentUser(response?.user)
+      setFormFields(defaultFormFields)
     } catch (e: any) {
       if (e.code === 'auth/email-already-in-use') {
         alert('Cannot create user, Email already in use')

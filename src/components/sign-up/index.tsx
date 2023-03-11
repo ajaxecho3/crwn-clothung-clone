@@ -1,8 +1,9 @@
-import React, { ChangeEvent, FormEvent, useState } from 'react'
+import React, { ChangeEvent, FormEvent, useContext, useState } from 'react'
 import Button from '../common/Button'
 import Input from '../common/Input'
 import { createAuthUserWithEmailAndPassword, createUserDocumentFromAuth } from '../../utils/firebase'
 import './index.scss'
+import { UserContext } from '../../context/user.context'
 type Props = {}
 
 const defaultFormFields = {
@@ -23,7 +24,7 @@ const SignUp = (props: Props) => {
     password,
     confirmPassword
   } = formFields
-
+  const {setCurrentUser} = useContext(UserContext)
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const {name, value} = event.target
     setFormFields({...formFields, [name]: value})
@@ -40,8 +41,10 @@ const SignUp = (props: Props) => {
     try{
       const response = await createAuthUserWithEmailAndPassword(email, password)
       if(response){
+        setCurrentUser(response.user)
         await createUserDocumentFromAuth(response, { displayName })
         setFormFields(defaultFormFields)
+        
 
       }
     }catch(e: any){
