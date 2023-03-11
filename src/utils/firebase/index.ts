@@ -1,6 +1,20 @@
 
 import { initializeApp } from 'firebase/app'
-import {getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider, UserCredential, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} from 'firebase/auth'
+import {
+  getAuth, 
+  signInWithRedirect, 
+  signInWithPopup, 
+  GoogleAuthProvider, 
+  UserCredential, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut,
+  onAuthStateChanged,
+  NextOrObserver,
+  User,
+
+} 
+  from 'firebase/auth'
 import {getFirestore, doc, getDoc, setDoc} from 'firebase/firestore'
 const firebaseConfig = {
   apiKey: "AIzaSyCo408M4GD9jSzWsjHofp_yZ__39aodnc0",
@@ -26,12 +40,12 @@ export const signInWithGoogleRedirect = () => signInWithRedirect(auth, provider)
 export const db  = getFirestore()
 
 
-export const createUserDocumentFromAuth = async (userAuth:UserCredential, additionalInformation = {}) => {
-  const userDocRef = doc(db, "users", userAuth.user.uid);
+export const createUserDocumentFromAuth = async (userAuth:UserCredential['user'], additionalInformation = {}) => {
+  const userDocRef = doc(db, "users", userAuth.uid);
   const userSnapshot = await getDoc(userDocRef)
 
   if(!userSnapshot.exists()) {
-    const {displayName, email} = userAuth.user
+    const {displayName, email} = userAuth
     const createdAt = new Date()
 
     try {
@@ -66,3 +80,8 @@ export const signAuthUserWithEmailAndPassword = async (email:string, password: s
 }
 
 export const signOutUser = async () => await signOut(auth)
+
+export const onAuthStateChangeListener = (
+  callback: NextOrObserver<User>,
+ 
+) => onAuthStateChanged(auth, callback);

@@ -7,11 +7,11 @@ import { signOutUser } from '../../utils/firebase'
 
 function Header() {
 
-  const {currentUser, setCurrentUser} = useContext(UserContext)
+  const {currentUser} = useContext(UserContext)
 
   const handleSignOut = async () => {
     await signOutUser()
-    setCurrentUser(null)
+    
   }
   return (
     <Fragment>
